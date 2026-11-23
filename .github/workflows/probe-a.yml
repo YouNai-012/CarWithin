@@ -1,0 +1,11 @@
+name: iOS 未签名 IPA probe
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, auto-start]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo a-ok
