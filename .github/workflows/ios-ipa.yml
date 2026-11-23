@@ -1,0 +1,49 @@
+name: iOS 未签名 IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, auto-start]
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      # 仓库按 .gitignore 不提交 MFi 身份；用三个 Secret 注入，App 启动即可直接载入。
+      # MFI_P7B_B64 / MFI_CER_B64 / MFI_X963_B64 = 官方 IPA 里 Payload/TDSCarKit.app/ 下同名文件的 base64。
+      - name: 注入 MFi 身份
+        if: ${{ secrets.MFI_P7B_B64 != '' }}
+        run: |
+          mkdir -p App/BundledIdentity
+          printf '%s' "${{ secrets.MFI_P7B_B64 }}" | base64 --decode > App/BundledIdentity/certificate.p7b
+          printf '%s' "${{ secrets.MFI_CER_B64 }}" | base64 --decode > App/BundledIdentity/leaf.cer
+          printf '%s' "${{ secrets.MFI_X963_B64 }}" | base64 --decode > App/BundledIdentity/private.x963
+
+      - name: 重新生成 Xcode 工程
+        env:
+          # 与官方包名保持一致，App 内检查更新和覆盖安装都依赖它。
+          TDS_BUNDLE_IDENTIFIER: com.hanlinzhou.SameDeviceCarPlayPoC
+        run: python3 Tools/generate_project.py
+
+      - name: 编译（不签名）
+        run: |
+          xcodebuild -project TDSCarKit.xcodeproj -scheme TDSCarKit \
+            -configuration Release -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: 打包成 IPA
+        run: |
+          mkdir -p out/Payload
+          cp -R build/Build/Products/Release-iphoneos/TDSCarKit.app out/Payload/
+          cd out
+          zip -qry CarWithin-unsigned.ipa Payload
+          shasum -a 256 CarWithin-unsigned.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CarWithin-unsigned-ipa
+          path: out/CarWithin-unsigned.ipa

@@ -60,6 +60,7 @@
 		91D70C6A0CBCCD71F54D3D1E /* Sources/TDSCarKitCore/BLEFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C6E806A6C11F650900F11C /* Sources/TDSCarKitCore/BLEFrame.swift */; };
 		928C639A0266F05A55F99737 /* Sources/TDSCarKitCore/Vendor/BigInt/BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C09502D8BCE582091447F6 /* Sources/TDSCarKitCore/Vendor/BigInt/BigInt.swift */; };
 		9AA8500AA5EED0F288E24FE1 /* App/BLEBootstrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FC063C47C1B6FBDC0FB3C93 /* App/BLEBootstrap.swift */; };
+		B7F41C0E5A2D93816E4F70A1 /* App/AutoStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E90D5B1F4A82769B10D3C5 /* App/AutoStart.swift */; };
 		A18B9DFB86043150E2D85A29 /* Sources/TDSCarKitCore/Vendor/BigInt/Multiplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = A757D2EA9A7DF7472DF8C55E /* Sources/TDSCarKitCore/Vendor/BigInt/Multiplication.swift */; };
 		A77236DFEF0F54D93D1A8A28 /* App/SettingsUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B374C20AACA7AAE5D44C7088 /* App/SettingsUI.swift */; };
 		A9DDBA2899C281474474D15B /* Sources/CTDSCarKitCrypto/TDSCarKitCrypto.c in Sources */ = {isa = PBXBuildFile; fileRef = D3F8C56D7B6DEA9C9CA53610 /* Sources/CTDSCarKitCrypto/TDSCarKitCrypto.c */; };
@@ -108,6 +109,7 @@
 		0D9E496F6FDD084D2475F032 /* Sources/TDSCarKitCore/Vendor/BigInt/GCD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/TDSCarKitCore/Vendor/BigInt/GCD.swift; sourceTree = "<group>"; };
 		0F5C1FCAA17FA67FE2BE494F /* Sources/TDSCarKitCore/AnnexB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/TDSCarKitCore/AnnexB.swift; sourceTree = "<group>"; };
 		0FC063C47C1B6FBDC0FB3C93 /* App/BLEBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/BLEBootstrap.swift; sourceTree = "<group>"; };
+		C3E90D5B1F4A82769B10D3C5 /* App/AutoStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/AutoStart.swift; sourceTree = "<group>"; };
 		16E2A38BC8A7D4D0FB884AB6 /* App/CarPlayMediaSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/CarPlayMediaSession.swift; sourceTree = "<group>"; };
 		18BA2B2B0F1312E3F3B8DBA2 /* App/CarPlayPictureInPicture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/CarPlayPictureInPicture.swift; sourceTree = "<group>"; };
 		18C6E806A6C11F650900F11C /* Sources/TDSCarKitCore/BLEFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/TDSCarKitCore/BLEFrame.swift; sourceTree = "<group>"; };
@@ -203,6 +205,7 @@
 				EF380427ACDEC6B0D0675D84 /* App/AppReleaseViews.swift */,
 				7363CE38FC2E2B8EC79091DD /* App/AppReleaseService.swift */,
 				0FC063C47C1B6FBDC0FB3C93 /* App/BLEBootstrap.swift */,
+				C3E90D5B1F4A82769B10D3C5 /* App/AutoStart.swift */,
 				575E3399A1442CCAC5A79931 /* App/BackgroundKeepAlive.swift */,
 				8C60B0AAF013CD73B180689D /* App/BrowserReceiverPage.swift */,
 				3C241FB52D18614C66A83C76 /* App/CarLifeOutput.swift */,
@@ -356,6 +359,7 @@
 				55285D4FEF6F81A4317B6BCF /* App/AppReleaseViews.swift in Sources */,
 				5622E6B0FD20B264F6535DB5 /* App/AppReleaseService.swift in Sources */,
 				9AA8500AA5EED0F288E24FE1 /* App/BLEBootstrap.swift in Sources */,
+				B7F41C0E5A2D93816E4F70A1 /* App/AutoStart.swift in Sources */,
 				D1C0F3DD0BE894216FC7E7D7 /* App/BackgroundKeepAlive.swift in Sources */,
 				2E2D3509DE30136BB95409EE /* App/BrowserReceiverPage.swift in Sources */,
 				65EE858BFD0D425464E00224 /* App/CarLifeOutput.swift in Sources */,

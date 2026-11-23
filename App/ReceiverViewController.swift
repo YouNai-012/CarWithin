@@ -155,6 +155,16 @@ final class ReceiverViewController: UIViewController, CLLocationManagerDelegate 
     private let browserViewersLabel = UILabel()
     private let browserCopyButton = UIButton(type: .system)
     private let bluetoothSetupSwitch = UISwitch()
+    private let autoStartSwitch = UISwitch()
+    private let autoStartWiFiSwitch = UISwitch()
+    private let autoStopSwitch = UISwitch()
+    private let autoStartNameField = UITextField()
+    private let autoStart = AutoStartCoordinator()
+    /// 手动停止后抑制自动启动，直到触发条件消失。
+    private var autoStartSuppressed = false
+    private var autoStartInProgress = false
+    private var autoStartLastTrigger = "尚未触发"
+    private var wifiMissCount = 0
     private var needsNetworkDetails: Bool { modeControl.selectedSegmentIndex != 0 || bluetoothSetupSwitch.isOn }
     private let startButton = UIButton(type: .system)
     private let heading = UILabel()
@@ -303,6 +313,7 @@ final class ReceiverViewController: UIViewController, CLLocationManagerDelegate 
         channelField.keyboardType = .numberPad
         channelField.placeholder = "默认 36，一般无需修改"
         bluetoothSetupSwitch.addTarget(self, action: #selector(modeChanged), for: .valueChanged)
+        configureAutoStart()
         modeControl.selectedSegmentIndex = UIDevice.current.userInterfaceIdiom == .phone ? 1 : 0
         modeControl.isHidden = UIDevice.current.userInterfaceIdiom == .phone
         modeControl.setEnabled(UIDevice.current.userInterfaceIdiom == .phone, forSegmentAt: 1)
@@ -1364,7 +1375,10 @@ final class ReceiverViewController: UIViewController, CLLocationManagerDelegate 
         }
     }
     @objc private func toggleReceiver() {
-        if running || waitingForNetwork { stop(); return }
+        if running || waitingForNetwork {
+            if !autoStartInProgress { autoStartSuppressed = true }
+            stop(); return
+        }
         if !restartingAutomatically { networkRestartCount = 0 }
         clearStartupHint()
         updateCheckTask?.cancel()
@@ -2148,6 +2162,9 @@ extension ReceiverViewController {
             connection.append(.page("Wi-Fi 预设", icon: ("list.bullet", .systemBlue), detail: { WiFiPresetStore.selected()?.ssid ?? "未选择" }) { [unowned self] in self.presetsPage() })
             connection.append(.control("当前输出", icon: ("point.3.connected.trianglepath.dotted", .systemIndigo), headUnitOutput))
             connection.append(.page("输出设置", icon: ("slider.horizontal.3", .systemGray)) { [unowned self] in self.headUnitPage() })
+            connection.append(.page("自动启动", icon: ("bolt.fill", .systemYellow), detail: { [unowned self] in
+                self.autoStartSwitch.isOn ? (self.autoStartWiFiSwitch.isOn ? "蓝牙与 Wi-Fi" : "蓝牙") : (self.autoStartWiFiSwitch.isOn ? "仪表 Wi-Fi" : "关闭")
+            }) { [unowned self] in self.autoStartPage() })
             if outputMode == .browser {
                 connection.append(.page("HTTPS 设置", icon: ("lock.shield", .systemBlue)) { [unowned self] in self.httpsSettingsPage() })
             }
@@ -2535,6 +2552,124 @@ extension ReceiverViewController {
                 .note(airPlayStatus)
             ])
         ]
+    }
+
+    // MARK: 自动启动
+
+    private func configureAutoStart() {
+        let defaults = UserDefaults.standard
+        autoStartSwitch.isOn = defaults.object(forKey: "autoStartOnBluetooth") as? Bool ?? true
+        autoStartWiFiSwitch.isOn = defaults.object(forKey: "autoStartOnWiFi") as? Bool ?? true
+        autoStopSwitch.isOn = defaults.object(forKey: "autoStopOnDisconnect") as? Bool ?? true
+        autoStartNameField.text = defaults.string(forKey: "autoStartBluetoothName") ?? ""
+        [autoStartSwitch, autoStartWiFiSwitch, autoStopSwitch].forEach {
+            $0.addTarget(self, action: #selector(autoStartSettingsChanged), for: .valueChanged)
+        }
+        autoStartNameField.addTarget(self, action: #selector(autoStartNameChanged), for: .editingChanged)
+        autoStart.nameFilter = autoStartNameField.text ?? ""
+        autoStart.onStateChanged = { [weak self] state in self?.handleAutoStart(state) }
+        autoStart.start()
+    }
+
+    @objc private func autoStartSettingsChanged() {
+        let defaults = UserDefaults.standard
+        defaults.set(autoStartSwitch.isOn, forKey: "autoStartOnBluetooth")
+        defaults.set(autoStartWiFiSwitch.isOn, forKey: "autoStartOnWiFi")
+        defaults.set(autoStopSwitch.isOn, forKey: "autoStopOnDisconnect")
+        reloadVisibleSettings()
+    }
+
+    @objc private func autoStartNameChanged() {
+        UserDefaults.standard.set(autoStartNameField.text ?? "", forKey: "autoStartBluetoothName")
+        autoStart.nameFilter = autoStartNameField.text ?? ""
+    }
+
+    private func handleAutoStart(_ state: AutoStartCoordinator.State) {
+        let bluetoothHit = autoStartSwitch.isOn ? state.bluetoothName : nil
+        let wifiReady = state.wifiIPv4.map(isDashboardNetwork) ?? false
+        let wifiHit = autoStartWiFiSwitch.isOn && wifiReady
+        if bluetoothHit == nil && !wifiReady { autoStartSuppressed = false }
+        if running || waitingForNetwork {
+            // CarPlay 运行时音频路由会切到 CarPlay，车机蓝牙不再可见，只能按仪表 Wi-Fi 判断是否已离开。
+            if wifiReady { wifiMissCount = 0 }
+            else if running, autoStopSwitch.isOn, outputMode.usesInstrumentWiFi {
+                wifiMissCount += 1
+                if wifiMissCount >= 3 {
+                    wifiMissCount = 0
+                    log("自动停止：仪表 Wi-Fi 已断开")
+                    stop()
+                }
+            }
+            return
+        }
+        guard !autoStartSuppressed, identity != nil, modeControl.selectedSegmentIndex == 1,
+              bluetoothHit != nil || wifiHit else { return }
+        // 只有手机拿到仪表网段的地址才开投，避免在家里 Wi-Fi 上被蓝牙耳机之类的设备触发。
+        guard let address = localCarPlayAddress, isDashboardNetwork(address) else {
+            statusLabel.text = "检测到\(bluetoothHit.map { "车机蓝牙 \($0)" } ?? "仪表 Wi-Fi")，正在等待仪表 Wi-Fi…"
+            return
+        }
+        beginAutoStart(trigger: bluetoothHit.map { "车机蓝牙 \($0)" } ?? "仪表 Wi-Fi")
+    }
+
+    /// 自动启动只认仪表网段：手机连在家里 Wi-Fi 时不应开投屏。
+    private func isDashboardNetwork(_ ip: String) -> Bool {
+        func subnet(_ address: String) -> String {
+            address.split(separator: ".").prefix(3).joined(separator: ".")
+        }
+        return subnet(ip) == subnet(autoStartDashboardAddress)
+    }
+
+    private var autoStartDashboardAddress: String {
+        func value(_ field: UITextField, _ fallback: String) -> String {
+            let text = field.text?.trimmingCharacters(in: .whitespaces) ?? ""
+            return text.isEmpty ? fallback : text
+        }
+        switch outputMode {
+        case .zeeho: return value(zeehoAddressField, "192.168.0.1")
+        case .tailing: return value(tailingAddressField, "192.168.1.1")
+        default: return value(ninebotAddressField, "192.168.1.1")
+        }
+    }
+
+    private func beginAutoStart(trigger: String) {
+        modeChanged()
+        var changed = false
+        if !outputMode.usesInstrumentWiFi {
+            headUnitOutput.selectedSegmentIndex = HeadUnitOutput.ninebot.rawValue
+            changed = true
+        }
+        if outputMode == .ninebot, (ninebotAddressField.text ?? "").trimmingCharacters(in: .whitespaces).isEmpty {
+            ninebotAddressField.text = "192.168.1.1"
+            changed = true
+        }
+        if changed {
+            saveHeadUnitOutput()
+            refreshVideoOutputSummary()
+            updateVideoAspect()
+            reloadVisibleSettings()
+        }
+        autoStartLastTrigger = trigger
+        log("自动启动：\(trigger) 已就绪，开始启动 CarPlay 与「\(headUnitOutput.selectedTitle)」投屏")
+        autoStartInProgress = true
+        toggleReceiver()
+        autoStartInProgress = false
+    }
+
+    fileprivate func autoStartPage() -> SettingsPageController {
+        page("自动启动") { [unowned self] in
+            [
+                SettingsSection(footer: "只在本机 CarPlay 未启动时触发。自动启动后手动点「停止」不会再自动启动，直到蓝牙或 Wi-Fi 重新连接。", [
+                    .control("连上车机蓝牙后自动启动", icon: ("dot.radiowaves.left.and.right", .systemBlue), autoStartSwitch),
+                    SettingsRow.field("蓝牙名称包含", autoStartNameField, placeholder: "留空匹配任意蓝牙"),
+                    .control("仪表 Wi-Fi 就绪也自动启动", icon: ("wifi", .systemBlue), autoStartWiFiSwitch),
+                    .control("断开后自动停止", icon: ("stop.circle", .systemOrange), autoStopSwitch)
+                ]),
+                SettingsSection(footer: "当前输出不是仪表时，自动启动会切到「九号 5 寸」；其他仪表请先在「当前输出」里选好。", [
+                    .info("上次触发", autoStartLastTrigger)
+                ])
+            ]
+        }
     }
 
     private func prepareExternalOutput(configuration: ReceiverConfiguration) {
