@@ -14,12 +14,20 @@ jobs:
       # 仓库按 .gitignore 不提交 MFi 身份；用三个 Secret 注入，App 启动即可直接载入。
       # MFI_P7B_B64 / MFI_CER_B64 / MFI_X963_B64 = 官方 IPA 里 Payload/TDSCarKit.app/ 下同名文件的 base64。
       - name: 注入 MFi 身份
-        if: ${{ secrets.MFI_P7B_B64 != '' }}
+        env:
+          MFI_P7B_B64: ${{ secrets.MFI_P7B_B64 }}
+          MFI_CER_B64: ${{ secrets.MFI_CER_B64 }}
+          MFI_X963_B64: ${{ secrets.MFI_X963_B64 }}
         run: |
           mkdir -p App/BundledIdentity
-          printf '%s' "${{ secrets.MFI_P7B_B64 }}" | base64 --decode > App/BundledIdentity/certificate.p7b
-          printf '%s' "${{ secrets.MFI_CER_B64 }}" | base64 --decode > App/BundledIdentity/leaf.cer
-          printf '%s' "${{ secrets.MFI_X963_B64 }}" | base64 --decode > App/BundledIdentity/private.x963
+          if [ -n "${MFI_P7B_B64:-}" ]; then
+            printf '%s' "$MFI_P7B_B64" | base64 --decode > App/BundledIdentity/certificate.p7b
+            printf '%s' "$MFI_CER_B64" | base64 --decode > App/BundledIdentity/leaf.cer
+            printf '%s' "$MFI_X963_B64" | base64 --decode > App/BundledIdentity/private.x963
+            echo "已注入 MFi 身份"
+          else
+            echo "未配置 MFi Secret，构建产物需要手动导入身份"
+          fi
 
       - name: 重新生成 Xcode 工程
         env:
