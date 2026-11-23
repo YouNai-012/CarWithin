@@ -1,0 +1,10 @@
+name: probe-c
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: env-literal
+        env:
+          FOO: bar
+        run: echo "$FOO"
