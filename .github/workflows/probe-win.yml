@@ -1,7 +1,0 @@
-name: probe-win
-on: workflow_dispatch
-jobs:
-  t:
-    runs-on: windows-latest
-    steps:
-      - run: echo win-ok
