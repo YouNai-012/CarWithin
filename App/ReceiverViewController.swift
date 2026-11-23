@@ -159,6 +159,7 @@ final class ReceiverViewController: UIViewController, CLLocationManagerDelegate 
     private let autoStartWiFiSwitch = UISwitch()
     private let autoStopSwitch = UISwitch()
     private let autoStartNameField = UITextField()
+    private let ninebotLaunchField = UITextField()
     private let autoStart = AutoStartCoordinator()
     /// 手动停止后抑制自动启动，直到触发条件消失。
     private var autoStartSuppressed = false
@@ -2165,6 +2166,9 @@ extension ReceiverViewController {
             connection.append(.page("自动启动", icon: ("bolt.fill", .systemYellow), detail: { [unowned self] in
                 self.autoStartSwitch.isOn ? (self.autoStartWiFiSwitch.isOn ? "蓝牙与 Wi-Fi" : "蓝牙") : (self.autoStartWiFiSwitch.isOn ? "仪表 Wi-Fi" : "关闭")
             }) { [unowned self] in self.autoStartPage() })
+            connection.append(.page("九号 App 入口", icon: ("arrow.up.forward.app", .systemBlue), detail: { [unowned self] in
+                self.ninebotLaunchURL
+            }) { [unowned self] in self.ninebotAppPage() })
             if outputMode == .browser {
                 connection.append(.page("HTTPS 设置", icon: ("lock.shield", .systemBlue)) { [unowned self] in self.httpsSettingsPage() })
             }
@@ -2562,6 +2566,7 @@ extension ReceiverViewController {
         autoStartWiFiSwitch.isOn = defaults.object(forKey: "autoStartOnWiFi") as? Bool ?? true
         autoStopSwitch.isOn = defaults.object(forKey: "autoStopOnDisconnect") as? Bool ?? true
         autoStartNameField.text = defaults.string(forKey: "autoStartBluetoothName") ?? ""
+        ninebotLaunchField.text = defaults.string(forKey: "ninebotLaunchURL") ?? "ninebot://"
         [autoStartSwitch, autoStartWiFiSwitch, autoStopSwitch].forEach {
             $0.addTarget(self, action: #selector(autoStartSettingsChanged), for: .valueChanged)
         }
@@ -2667,6 +2672,47 @@ extension ReceiverViewController {
                 ]),
                 SettingsSection(footer: "当前输出不是仪表时，自动启动会切到「九号 5 寸」；其他仪表请先在「当前输出」里选好。", [
                     .info("上次触发", autoStartLastTrigger)
+                ])
+            ]
+        }
+    }
+
+    // MARK: 九号 App 入口
+
+    private var ninebotLaunchURL: String {
+        let saved = UserDefaults.standard.string(forKey: "ninebotLaunchURL")?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return saved.isEmpty ? "ninebot://" : saved
+    }
+
+    @objc private func openNinebotApp() {
+        let typed = ninebotLaunchField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let value = typed.isEmpty ? ninebotLaunchURL : typed
+        guard let url = URL(string: value), let scheme = url.scheme, !scheme.isEmpty else {
+            alert("跳转地址无效", "请填写类似 ninebot:// 的地址。")
+            return
+        }
+        UserDefaults.standard.set(value, forKey: "ninebotLaunchURL")
+        UIApplication.shared.open(url, options: [:]) { [weak self] opened in
+            guard let self else { return }
+            if opened { self.log("已跳转九号 App：\(value)") }
+            else { self.alert("打不开九号出行", "请确认已安装九号出行，或在下方修改跳转地址。") }
+        }
+    }
+
+    private func saveNinebotLaunchURL() {
+        UserDefaults.standard.set(ninebotLaunchField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "", forKey: "ninebotLaunchURL")
+        reloadVisibleSettings()
+    }
+
+    fileprivate func ninebotAppPage() -> SettingsPageController {
+        page("九号 App 入口") { [unowned self] in
+            [
+                SettingsSection(footer: "九号 5 寸仪表要先在九号 App 里打开「导航投屏」，仪表才会进入接收状态；这一步第三方 App 代替不了。", [
+                    .action("打开九号出行", icon: ("arrow.up.forward.app", .systemBlue)) { [unowned self] in self.openNinebotApp() },
+                    SettingsRow.field("跳转地址", ninebotLaunchField, placeholder: "ninebot://")
+                ]),
+                SettingsSection(footer: "找到更精确的投屏页地址时可以填在这里，九号 App 分享出来的 ninebot:// 链接都行。", [
+                    .action("保存跳转地址", icon: ("square.and.arrow.down", .systemGray)) { [unowned self] in self.saveNinebotLaunchURL() }
                 ])
             ]
         }
