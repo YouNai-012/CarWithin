@@ -255,7 +255,7 @@ final class ReceiverViewController: UIViewController, CLLocationManagerDelegate 
     private var autoStartSuppressed = false
     private var autoStartInProgress = false
     private var autoStartLastTrigger = ""
-    private var wifiMissCount = 0
+    private var lastDashboardSeen = Date()
     private var needsNetworkDetails: Bool { modeControl.selectedSegmentIndex != 0 || bluetoothSetupSwitch.isOn }
     private let startButton = UIButton(type: .system)
     private let heading = UILabel()
@@ -3027,6 +3027,7 @@ extension ReceiverViewController {
         autoStartNameField.addTarget(self, action: #selector(autoStartNameChanged), for: .editingChanged)
         autoStart.nameFilter = autoStartNameField.text ?? ""
         autoStart.onStateChanged = { [weak self] state in self?.handleAutoStart(state) }
+        autoStart.onTick = { [weak self] in self?.autoStopIfDashboardLost() }
         autoStart.start()
     }
 
@@ -3046,21 +3047,10 @@ extension ReceiverViewController {
     private func handleAutoStart(_ state: AutoStartCoordinator.State) {
         let bluetoothHit = autoStartSwitch.isOn ? state.bluetoothName : nil
         let wifiReady = state.wifiIPv4.map(isDashboardNetwork) ?? false
-        let wifiHit = autoStartWiFiSwitch.isOn && wifiReady
+        // Wi-Fi 单独触发只对已选仪表的输出有意义，否则浏览器/车机模式会在家用网段误启动。
+        let wifiHit = autoStartWiFiSwitch.isOn && wifiReady && outputMode.usesInstrumentWiFi
         if bluetoothHit == nil && !wifiReady { autoStartSuppressed = false }
-        if running || waitingForNetwork {
-            // CarPlay 运行时音频路由会切到 CarPlay，车机蓝牙不再可见，只能按仪表 Wi-Fi 判断是否已离开。
-            if wifiReady { wifiMissCount = 0 }
-            else if running, autoStopSwitch.isOn, outputMode.usesInstrumentWiFi {
-                wifiMissCount += 1
-                if wifiMissCount >= 3 {
-                    wifiMissCount = 0
-                    log(CWL("自动停止：仪表 Wi-Fi 已断开"))
-                    stop()
-                }
-            }
-            return
-        }
+        guard !running, !waitingForNetwork else { return }
         guard !autoStartSuppressed, identity != nil, modeControl.selectedSegmentIndex == 1,
               bluetoothHit != nil || wifiHit else { return }
         // 只有手机拿到仪表网段的地址才开投，避免在家里 Wi-Fi 上被蓝牙耳机之类的设备触发。
@@ -3071,7 +3061,24 @@ extension ReceiverViewController {
         beginAutoStart(trigger: bluetoothHit.map { CWL("车机蓝牙 {1}", [$0]) } ?? CWL("仪表 Wi-Fi"))
     }
 
-    /// 自动查找仪表 IP 的型号没有固定目标网段，此时只要求本机已拿到 Wi-Fi 地址。
+    /// 仪表 Wi-Fi 掉线 6 秒（三次采样）后才停，避开路由切换时的瞬时断流。
+    private func autoStopIfDashboardLost() {
+        guard autoStopSwitch.isOn, outputMode.usesInstrumentWiFi else { return }
+        // 未运行时持续刷新基准，避免长时间空闲后一开投就按旧时间戳判停。
+        guard running || waitingForNetwork else {
+            lastDashboardSeen = Date()
+            return
+        }
+        if let address = ReceiverConfiguration.wifiIPv4Address(), isDashboardNetwork(address) {
+            lastDashboardSeen = Date()
+            return
+        }
+        guard Date().timeIntervalSince(lastDashboardSeen) >= 6 else { return }
+        log(CWL("自动停止：仪表 Wi-Fi 已断开"))
+        stop()
+    }
+
+    /// 自动查找仪表 IP 的型号没有固定目标网段，无法判定；非仪表输出返回 nil。
     private var autoStartDashboardAddress: String? {
         func value(_ field: UITextField, _ fallback: String) -> String {
             let text = field.text?.trimmingCharacters(in: .whitespaces) ?? ""
@@ -3085,7 +3092,8 @@ extension ReceiverViewController {
         case .cfmoto5, .cfmoto62: return value(cfmotoAddressField, "192.168.0.1")
         case .tailing: return value(tailingAddressField, "192.168.1.1")
         case .ninebot43: return value(ninebot43AddressField, "192.168.169.1")
-        default: return value(ninebotAddressField, "192.168.1.1")
+        case .ninebot, .ninebotSeven: return value(ninebotAddressField, "192.168.1.1")
+        case .browser, .carLife, .airPlay: return nil
         }
     }
 
@@ -3094,22 +3102,14 @@ extension ReceiverViewController {
         func subnet(_ address: String) -> String {
             address.split(separator: ".").prefix(3).joined(separator: ".")
         }
-        guard let target = autoStartDashboardAddress else { return true }
+        guard let target = autoStartDashboardAddress else { return false }
         return subnet(ip) == subnet(target)
     }
 
     private func beginAutoStart(trigger: String) {
         modeChanged()
-        var changed = false
-        if !outputMode.usesInstrumentWiFi {
-            headUnitOutput.selectedSegmentIndex = HeadUnitOutput.ninebot.menuIndex
-            changed = true
-        }
         if outputMode == .ninebot, (ninebotAddressField.text ?? "").trimmingCharacters(in: .whitespaces).isEmpty {
             ninebotAddressField.text = "192.168.1.1"
-            changed = true
-        }
-        if changed {
             saveHeadUnitOutput()
             refreshVideoOutputSummary()
             updateVideoAspect()
@@ -3125,13 +3125,13 @@ extension ReceiverViewController {
     fileprivate func autoStartPage() -> SettingsPageController {
         page(CWL("自动启动")) { [unowned self] in
             [
-                SettingsSection(footer: CWL("只在本机 CarPlay 未启动时触发。自动启动后手动点「停止」不会再自动启动，直到蓝牙或 Wi-Fi 重新连接。"), [
+                SettingsSection(footer: CWL("只在你已选好仪表输出、且本机 CarPlay 未启动时触发。自动启动后手动点「停止」不会再自动启动，直到蓝牙或 Wi-Fi 重新连接。"), [
                     .control(CWL("连上车机蓝牙后自动启动"), icon: ("dot.radiowaves.left.and.right", .systemBlue), autoStartSwitch),
                     SettingsRow.field(CWL("蓝牙名称包含"), autoStartNameField, placeholder: CWL("留空匹配任意蓝牙")),
                     .control(CWL("仪表 Wi-Fi 就绪也自动启动"), icon: ("wifi", .systemBlue), autoStartWiFiSwitch),
                     .control(CWL("断开后自动停止"), icon: ("stop.circle", .systemOrange), autoStopSwitch)
                 ]),
-                SettingsSection(footer: CWL("当前输出不是仪表时，自动启动会切到「九号 5 寸」；其他仪表请先在「当前输出」里选好。"), [
+                SettingsSection(footer: CWL("Wi-Fi 触发只对仪表网段生效；未选仪表输出时请先在「当前输出」里选好。"), [
                     .info(CWL("上次触发"), autoStartLastTrigger.isEmpty ? CWL("尚未触发") : autoStartLastTrigger)
                 ])
             ]
@@ -3153,6 +3153,7 @@ extension ReceiverViewController {
             return
         }
         UserDefaults.standard.set(value, forKey: "ninebotLaunchURL")
+        reloadVisibleSettings()
         UIApplication.shared.open(url, options: [:]) { [weak self] opened in
             guard let self else { return }
             if opened { self.log(CWL("已跳转九号 App：{1}", [value])) }

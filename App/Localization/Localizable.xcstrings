@@ -19524,19 +19524,19 @@
         }
       }
     },
-    "只在本机 CarPlay 未启动时触发。自动启动后手动点「停止」不会再自动启动，直到蓝牙或 Wi-Fi 重新连接。": {
+    "只在你已选好仪表输出、且本机 CarPlay 未启动时触发。自动启动后手动点「停止」不会再自动启动，直到蓝牙或 Wi-Fi 重新连接。": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Triggers only while local CarPlay is not running. After you tap Stop manually, auto start stays off until Bluetooth or Wi-Fi reconnects."
+            "value": "Triggers only when an instrument output is selected and local CarPlay is not running. After you tap Stop manually, auto start stays off until Bluetooth or Wi-Fi reconnects."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "只在本机 CarPlay 未启动时触发。自动启动后手动点「停止」不会再自动启动，直到蓝牙或 Wi-Fi 重新连接。"
+            "value": "只在你已选好仪表输出、且本机 CarPlay 未启动时触发。自动启动后手动点「停止」不会再自动启动，直到蓝牙或 Wi-Fi 重新连接。"
           }
         }
       }
@@ -19626,19 +19626,19 @@
         }
       }
     },
-    "当前输出不是仪表时，自动启动会切到「九号 5 寸」；其他仪表请先在「当前输出」里选好。": {
+    "Wi-Fi 触发只对仪表网段生效；未选仪表输出时请先在「当前输出」里选好。": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "When the current output is not an instrument, auto start switches to Ninebot 5-inch. Choose another instrument under Current Output first."
+            "value": "Wi-Fi triggering only applies to the instrument subnet. If no instrument output is selected, choose one under Current Output first."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "当前输出不是仪表时，自动启动会切到「九号 5 寸」；其他仪表请先在「当前输出」里选好。"
+            "value": "Wi-Fi 触发只对仪表网段生效；未选仪表输出时请先在「当前输出」里选好。"
           }
         }
       }

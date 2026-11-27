@@ -13,6 +13,8 @@ final class AutoStartCoordinator {
     }
 
     var onStateChanged: ((State) -> Void)?
+    /// 每次采样都回调，用于按时间判断仪表 Wi-Fi 是否已断开。
+    var onTick: (() -> Void)?
 
     /// 蓝牙名称过滤，留空表示任意蓝牙音频设备。写入后立即重新评估。
     var nameFilter: String {
@@ -67,6 +69,7 @@ final class AutoStartCoordinator {
         wifiIPv4 = ReceiverConfiguration.wifiIPv4Address()
         bluetoothName = Self.bluetoothAudioPort()
         evaluate()
+        if let onTick { DispatchQueue.main.async(execute: onTick) }
     }
 
     private static func bluetoothAudioPort() -> String? {
