@@ -19370,6 +19370,482 @@
           }
         }
       }
+    },
+    "自动启动": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto Start"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自动启动"
+          }
+        }
+      }
+    },
+    "蓝牙与 Wi-Fi": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth + Wi-Fi"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "蓝牙与 Wi-Fi"
+          }
+        }
+      }
+    },
+    "蓝牙": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "蓝牙"
+          }
+        }
+      }
+    },
+    "仪表 Wi-Fi": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instrument Wi-Fi"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仪表 Wi-Fi"
+          }
+        }
+      }
+    },
+    "九号 App 入口": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ninebot App Shortcut"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "九号 App 入口"
+          }
+        }
+      }
+    },
+    "自动停止：仪表 Wi-Fi 已断开": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto stop: instrument Wi-Fi disconnected"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自动停止：仪表 Wi-Fi 已断开"
+          }
+        }
+      }
+    },
+    "检测到{1}，正在等待仪表 Wi-Fi…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detected {1}, waiting for instrument Wi-Fi…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检测到{1}，正在等待仪表 Wi-Fi…"
+          }
+        }
+      }
+    },
+    "车机蓝牙 {1}": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Head unit Bluetooth {1}"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "车机蓝牙 {1}"
+          }
+        }
+      }
+    },
+    "自动启动：{1} 已就绪，开始启动 CarPlay 与「{2}」投屏": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto start: {1} is ready, starting CarPlay and \"{2}\" output"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自动启动：{1} 已就绪，开始启动 CarPlay 与「{2}」投屏"
+          }
+        }
+      }
+    },
+    "只在本机 CarPlay 未启动时触发。自动启动后手动点「停止」不会再自动启动，直到蓝牙或 Wi-Fi 重新连接。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Triggers only while local CarPlay is not running. After you tap Stop manually, auto start stays off until Bluetooth or Wi-Fi reconnects."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只在本机 CarPlay 未启动时触发。自动启动后手动点「停止」不会再自动启动，直到蓝牙或 Wi-Fi 重新连接。"
+          }
+        }
+      }
+    },
+    "连上车机蓝牙后自动启动": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto start when head unit Bluetooth connects"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "连上车机蓝牙后自动启动"
+          }
+        }
+      }
+    },
+    "蓝牙名称包含": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth name contains"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "蓝牙名称包含"
+          }
+        }
+      }
+    },
+    "留空匹配任意蓝牙": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave empty to match any Bluetooth device"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "留空匹配任意蓝牙"
+          }
+        }
+      }
+    },
+    "仪表 Wi-Fi 就绪也自动启动": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Also auto start when instrument Wi-Fi is ready"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仪表 Wi-Fi 就绪也自动启动"
+          }
+        }
+      }
+    },
+    "断开后自动停止": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto stop after disconnect"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "断开后自动停止"
+          }
+        }
+      }
+    },
+    "当前输出不是仪表时，自动启动会切到「九号 5 寸」；其他仪表请先在「当前输出」里选好。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When the current output is not an instrument, auto start switches to Ninebot 5-inch. Choose another instrument under Current Output first."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前输出不是仪表时，自动启动会切到「九号 5 寸」；其他仪表请先在「当前输出」里选好。"
+          }
+        }
+      }
+    },
+    "上次触发": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last trigger"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上次触发"
+          }
+        }
+      }
+    },
+    "尚未触发": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not triggered yet"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尚未触发"
+          }
+        }
+      }
+    },
+    "跳转地址无效": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid link"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跳转地址无效"
+          }
+        }
+      }
+    },
+    "请填写类似 ninebot:// 的地址。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a link such as ninebot://."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请填写类似 ninebot:// 的地址。"
+          }
+        }
+      }
+    },
+    "已跳转九号 App：{1}": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opened Ninebot app: {1}"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已跳转九号 App：{1}"
+          }
+        }
+      }
+    },
+    "打不开九号出行": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cannot open Ninebot"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打不开九号出行"
+          }
+        }
+      }
+    },
+    "请确认已安装九号出行，或在下方修改跳转地址。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Make sure the Ninebot app is installed, or change the link below."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请确认已安装九号出行，或在下方修改跳转地址。"
+          }
+        }
+      }
+    },
+    "九号 5 寸仪表要先在九号 App 里打开「导航投屏」，仪表才会进入接收状态；这一步第三方 App 代替不了。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On the Ninebot 5-inch instrument, enable Navigation Casting in the Ninebot app first so the instrument starts receiving. A third-party app cannot do this step."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "九号 5 寸仪表要先在九号 App 里打开「导航投屏」，仪表才会进入接收状态；这一步第三方 App 代替不了。"
+          }
+        }
+      }
+    },
+    "打开九号出行": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Ninebot"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开九号出行"
+          }
+        }
+      }
+    },
+    "跳转地址": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Link"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跳转地址"
+          }
+        }
+      }
+    },
+    "保存跳转地址": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save link"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存跳转地址"
+          }
+        }
+      }
+    },
+    "找到更精确的投屏页地址时可以填在这里，九号 App 分享出来的 ninebot:// 链接都行。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill in a more precise casting page link here if you find one; any ninebot:// link shared by the Ninebot app works."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "找到更精确的投屏页地址时可以填在这里，九号 App 分享出来的 ninebot:// 链接都行。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
