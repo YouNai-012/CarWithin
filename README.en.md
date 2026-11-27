@@ -2,7 +2,7 @@
 
 **English** · [简体中文](README.md)
 
-[![Platform: iOS 16.0+](https://img.shields.io/badge/iOS-16.0%2B-blue)](#download-and-install) [![Status: released](https://img.shields.io/badge/status-released-brightgreen)](#quick-start) [![Release](https://img.shields.io/github/v/release/xmz28/CarWithin?label=release)](https://github.com/xmz28/CarWithin/releases/latest)
+[![Platform: iOS 16.0+](https://img.shields.io/badge/iOS-16.0%2B-blue)](#download-and-install) [![Status: released](https://img.shields.io/badge/status-released-brightgreen)](#quick-start) [![Release](https://img.shields.io/github/v/release/YouNai-012/CarWithin?label=release)](https://github.com/YouNai-012/CarWithin/releases/latest)
 
 CarWithin runs CarPlay on the same iPhone that generates its interface. Use CarPlay directly on your iPhone for navigation and music, or send the display to a head unit, tablet, computer, or another phone on the local network. A receiving browser can send touch input back to CarPlay.
 
@@ -10,9 +10,15 @@ CarWithin runs CarPlay on the same iPhone that generates its interface. Use CarP
 
 ## Download and install
 
-- [Download from GitHub Releases](https://github.com/xmz28/CarWithin/releases/latest). The current version is **1.0.5 (build 17)**.
-- Download `CarWithin-1.0.5-unsigned.ipa` and sign and install it with an IPA sideloading tool using your own signing setup. Follow any iOS prompts for developer trust or Developer Mode.
+- [Download from GitHub Releases](https://github.com/YouNai-012/CarWithin/releases/latest). The current version is **1.0.6 (build 18)**.
+- Download `CarWithin-1.0.6-unsigned.ipa` and sign and install it with an IPA sideloading tool using your own signing setup. Follow any iOS prompts for developer trust or Developer Mode.
 - The minimum installation target is iOS/iPadOS 16.0 on arm64; iOS 15 is not supported. Same-device CarPlay, audio, and background behavior still need testing on iOS 16.x hardware. CarWithin uses private iOS interfaces. Compatibility depends on the device, OS version, and signing setup, and OS updates can affect it.
+
+## What is new in 1.0.6
+
+- Update checks, release history and the About page now point at this repository instead of the upstream releases.
+- New auto start on head unit Bluetooth or instrument Wi-Fi: CarPlay starts only on the instrument subnet and stops 6 seconds after the instrument drops.
+- New Ninebot app shortcut with an editable launch link.
 
 ## What is new in 1.0.5
 
@@ -157,7 +163,7 @@ Code contributions in this release: [yiquchangge1](https://github.com/yiquchangg
 - **The page will not open.** Check that CarPlay is running and the local receiver page is enabled. Confirm that the devices can reach each other and try the HTTP address first. If HTTPS shows a certificate error, follow the setup steps on the receiving device.
 - **The page connects but shows no picture.** Try a different browser, H.264, a lower resolution, or a lower frame rate. X Browser played HTTP and HTTPS on a Redmi K30 5G in testing. Chrome 109 on the same device showed an H.265 decoding error. If switching pages exhausts the hardware decoder, restart the browser and try again.
 - **The picture plays without sound.** Select Wi-Fi audio in the app, restart CarPlay, and use the browser's enable-audio button if it appears. Check the volume on the receiving device.
-- **Check your version or report a problem.** Open **Settings → About** for the installed version, update check, and release history. For a bug report, include the device models, OS and browser versions, HTTP or HTTPS, codec and resolution, and any relevant lines from the app's diagnostic log. [Report an issue](https://github.com/xmz28/CarWithin/issues)
+- **Check your version or report a problem.** Open **Settings → About** for the installed version, update check, and release history. For a bug report, include the device models, OS and browser versions, HTTP or HTTPS, codec and resolution, and any relevant lines from the app's diagnostic log. [Report an issue](https://github.com/YouNai-012/CarWithin/issues)
 
 ## How it works and license
 
@@ -181,4 +187,4 @@ Contributions are entirely optional. Downloads, features, and updates are availa
 
 [Follow the author on Douyin](https://v.douyin.com/x64M2NbYj0A/)
 
-Copyright © 2026 xmz28
+Copyright © 2026 xmz28 · built by YouNai-012

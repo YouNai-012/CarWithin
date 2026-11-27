@@ -382,7 +382,7 @@ final class ReceiverViewController: UIViewController, CLLocationManagerDelegate 
     private var updateTimer: Timer?
     private weak var updateSheet: UIViewController?
     private var updateSheetAutomatic = false
-    private static let projectURL = URL(string: "https://github.com/xmz28/CarWithin")!
+    private static let projectURL = URL(string: "https://github.com/YouNai-012/CarWithin")!
     private static let releasesURL = projectURL.appendingPathComponent("releases")
     private static let authorURL = URL(string: "https://v.douyin.com/x64M2NbYj0A/")!
     private var lines: [String] = []
@@ -3515,7 +3515,7 @@ extension ReceiverViewController {
         page(CWL("关于")) { [unowned self] in
             [
                 SettingsSection([.view(self.aboutIdentityCard())]),
-                SettingsSection(footer: "Copyright © 2026 xmz28", self.aboutLinks())
+                SettingsSection(footer: "Copyright © 2026 xmz28 · YouNai-012 构建", self.aboutLinks())
             ]
         }
     }

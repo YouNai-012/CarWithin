@@ -19,8 +19,8 @@ final class UpdateStub: URLProtocol {
 @main
 struct UpdateSmoke {
     static func main() async throws {
-        let base = "https://github.com/xmz28/CarWithin/releases/download/v1.0.1/"
-        let api = "https://api.github.com/repos/xmz28/CarWithin/releases/latest"
+        let base = "https://github.com/YouNai-012/CarWithin/releases/download/v1.0.1/"
+        let api = "https://api.github.com/repos/YouNai-012/CarWithin/releases/latest"
         let checksum = String(repeating: "a", count: 64)
         var manifest: [String: Any] = ["schemaVersion": 1, "product": "CarWithin", "platform": "ios",
             "version": "1.0.1", "build": 13, "minimumOSVersion": "16.4", "releaseTag": "v1.0.1",

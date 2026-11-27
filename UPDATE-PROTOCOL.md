@@ -4,7 +4,7 @@
 
 ## 发现与比较
 
-读取 `https://api.github.com/repos/xmz28/CarWithin/releases/latest`，再下载该正式发布中的 `ios-update.json`。每次实际检查都会读取 JSON，即使本机已是最新版。自动检查沿用前台空闲、成功后间隔 24 小时、失败 15 分钟后再试的策略。
+读取 `https://api.github.com/repos/YouNai-012/CarWithin/releases/latest`，再下载该正式发布中的 `ios-update.json`。每次实际检查都会读取 JSON，即使本机已是最新版。自动检查沿用前台空闲、成功后间隔 24 小时、失败 15 分钟后再试的策略。
 
 只比较 JSON 的整数 `build` 与本机 `CFBundleVersion`；远端更大才自动提示。`version` 用于展示，并须与 Release 的数字标签一致。忽略按构建号记录。所有公开构建号必须全局递增，不重复、不归零；旧分支补发也必须由发布者确认不会把用户引向更旧的产品版本。
 

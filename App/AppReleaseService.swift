@@ -28,7 +28,7 @@ struct AppRelease: Decodable, Identifiable, Sendable {
     let assets: [Asset]
     var update: IOSUpdateMetadata?
 
-    static let repository = URL(string: "https://github.com/xmz28/CarWithin")!
+    static let repository = URL(string: "https://github.com/YouNai-012/CarWithin")!
     var version: String { tag_name.hasPrefix("v") ? String(tag_name.dropFirst()) : tag_name }
     var pageURL: URL { Self.repository.appendingPathComponent("releases/tag").appendingPathComponent(tag_name) }
     var isStable: Bool { !draft && !prerelease && ReleaseVersion(version) != nil }
@@ -146,14 +146,14 @@ struct AppReleaseService {
     func latestTag() async throws -> String { try await publishedLatest().tag_name }
 
     private func publishedLatest() async throws -> AppRelease {
-        let (data, _) = try await read("https://api.github.com/repos/xmz28/CarWithin/releases/latest")
+        let (data, _) = try await read("https://api.github.com/repos/YouNai-012/CarWithin/releases/latest")
         let release = try Self.decoder().decode(AppRelease.self, from: data)
         guard release.isStable else { throw ReleaseError.invalid }
         return release
     }
 
     func history(page: Int) async throws -> Page {
-        let (data, response) = try await read("https://api.github.com/repos/xmz28/CarWithin/releases?per_page=30&page=\(page)")
+        let (data, response) = try await read("https://api.github.com/repos/YouNai-012/CarWithin/releases?per_page=30&page=\(page)")
         let releases = try Self.decoder().decode([AppRelease].self, from: data).filter(\.isStable)
         return Page(releases: releases, hasNext: response.value(forHTTPHeaderField: "Link")?.contains("rel=\"next\"") == true)
     }
