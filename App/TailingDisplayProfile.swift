@@ -36,7 +36,7 @@ enum ZeehoCanvas: Int, CaseIterable, Sendable {
 enum ZeehoBitrate: Int, CaseIterable, Sendable {
     case auto = 0, m12 = 12, m15 = 15, m18 = 18, m24 = 24, m30 = 30
 
-    var title: String { self == .auto ? "自动（随帧率）" : "\(rawValue) Mbit/s" }
+    var title: String { self == .auto ? CWL("自动（随帧率）") : "\(rawValue) Mbit/s" }
     var bitsPerSecond: Int? { self == .auto ? nil : rawValue * 1_000_000 }
 }
 
@@ -44,7 +44,7 @@ enum ZeehoBitrate: Int, CaseIterable, Sendable {
 enum ZeehoEncodeProfile: Int, CaseIterable, Sendable {
     case baseline = 0, main = 1
 
-    var title: String { self == .baseline ? "Baseline（兼容）" : "Main（更清晰）" }
+    var title: String { self == .baseline ? CWL("Baseline（兼容）") : CWL("Main（更清晰）") }
 }
 
 /// A bounded compressed-frame FIFO. On overflow, discard the dependent GOP and wait for IDR.
@@ -145,8 +145,8 @@ enum TailingDisplayProfile: Equatable, Sendable {
         case .tailing43:
             return reported == preferredSize ? preferredSize : nil
         case .zeeho62:
-            guard reported.width == 1024, reported.height == 480 || reported.height == 488 else { return nil }
-            return preferredSize
+            guard reported.width == 1024, [480, 484, 488].contains(reported.height) else { return nil }
+            return reported.height == 484 ? reported : preferredSize
         case .zeehoAE2:
             guard (240...1920).contains(reported.width), (240...1080).contains(reported.height) else { return nil }
             return InstrumentFrameSize(width: reported.width & ~1, height: reported.height & ~1)

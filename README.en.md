@@ -6,14 +6,30 @@
 
 CarWithin runs CarPlay on the same iPhone that generates its interface. Use CarPlay directly on your iPhone for navigation and music, or send the display to a head unit, tablet, computer, or another phone on the local network. A receiving browser can send touch input back to CarPlay.
 
+**Android 1.0.0** · [Download APK](https://github.com/xmz28/CarWithin/releases/tag/android-v1.0.0) · [Install, supported dashboards, and source builds](android/README.en.md)
+
 ![CarWithin connection diagram showing playback on iPhone and output to a browser, wireless CarLife, compatible dashboards, or experimental AirPlay.](docs/images/carwithin-connections-en.png)
 
 ## Download and install
 
-- [Download from GitHub Releases](https://github.com/YouNai-012/CarWithin/releases/latest). The current version is **1.0.6 (build 18)**.
-- Download `CarWithin-1.0.6-unsigned.ipa` and sign and install it with an IPA sideloading tool using your own signing setup. Follow any iOS prompts for developer trust or Developer Mode.
+- [Download from GitHub Releases](https://github.com/YouNai-012/CarWithin/releases/latest). The current version is **1.0.7 (build 19)**.
+- Download `CarWithin-1.0.7-unsigned.ipa` and sign and install it with an IPA sideloading tool using your own signing setup. Follow any iOS prompts for developer trust or Developer Mode.
 - The minimum installation target is iOS/iPadOS 16.0 on arm64; iOS 15 is not supported. Same-device CarPlay, audio, and background behavior still need testing on iOS 16.x hardware. CarWithin uses private iOS interfaces. Compatibility depends on the device, OS version, and signing setup, and OS updates can affect it.
 - **Release builds bundle the MFi accessory identity** (`certificate.p7b`, `leaf.cer`, `private.x963`), so no import step is needed. If the app shows "No valid MFi identity has been imported" with the start button disabled, the IPA was not built by this repository, usually a local source build without the identity files. Extract them with `Tools/extract_mfi_identity.sh /path/release.ipa` into `App/BundledIdentity/` and rebuild; see [SOURCE-BUILD.md](SOURCE-BUILD.md).
+
+## What is new in 1.0.7
+
+- Source baseline synced to upstream 1.0.6, including the dashboard work below; this repository's auto start and Ninebot app shortcut are kept.
+- Release builds bundle the MFi accessory identity, so no import step is needed.
+
+Upstream 1.0.6 dashboard work:
+
+- Added support for Shouqu 480×208 instrument projection.
+- Added a ZEEHO AE4i Pro+ profile and improved CFMOTO dimension negotiation, connection retries and encoder recovery.
+- Expanded optional BMS cards and access for multiple battery brands. New models still require hardware validation.
+- Added more motorcycle instrument profiles and improved connection diagnostics.
+
+The Shouqu report covers the tested instrument only. Other models, firmware, lock-screen behavior and extended use need separate testing.
 
 ## What is new in 1.0.6
 
@@ -149,7 +165,7 @@ Settings → Feedback & Suggestions opens the [feedback survey](https://v.wjx.cn
 
 About → Appreciation & Support lists supporters and development/testing contributions; Buy me a coffee provides Alipay and WeChat options. Support is optional and does not affect features, updates or adaptation priorities.
 
-Code contributions in this release: [yiquchangge1](https://github.com/yiquchangge1) (SE+), [武汉 / yuliang-shuji](https://github.com/yuliang-shuji) (AE2 Pro), [Boos4721](https://github.com/Boos4721) (ANT BMS), and [扫毒单位 / SDDW007](https://github.com/SDDW007) (CFMOTO). Original commits and GitHub authorship are preserved.
+Code contributions in this release: [yiquchangge1](https://github.com/yiquchangge1) (SE+), [武汉 / yuliang-shuji](https://github.com/yuliang-shuji) (AE2 Pro), [Boos4721](https://github.com/Boos4721) (ANT and multi-brand BMS), [扫毒单位 / SDDW007](https://github.com/SDDW007) (CFMOTO), [ranchen-love](https://github.com/ranchen-love) (CFMOTO 5-inch), [飞扬大大 / F31C-73BD](https://github.com/F31C-73BD) (ZEEHO AE4i Pro+). Original commits and GitHub authorship are preserved.
 
 ## Check for updates and install a newer version
 
