@@ -59,6 +59,40 @@ for path in sorted(root.glob('App/Support/*')):
     ref = add('ref:'+relative, f'isa = PBXFileReference; lastKnownFileType = {filetype}; path = {q(relative)}; sourceTree = "<group>";')
     refs.append(ref)
     resource_builds.append(add('build:'+relative, f'isa = PBXBuildFile; fileRef = {ref};'))
+# CI 兜底：仓库不放身份材料，Actions 上缺它时从本仓库最新 Release 的 IPA 取回，
+# 否则产物装好后会停在「尚未导入有效的 MFi 身份」。本地生成工程不受影响。
+def fetch_ci_identity():
+    import io, urllib.request, zipfile
+    if os.environ.get('GITHUB_ACTIONS') != 'true':
+        return
+    target = root / 'App/BundledIdentity'
+    names = ('certificate.p7b', 'leaf.cer', 'private.x963')
+    if all((target / name).is_file() for name in names):
+        return
+    headers = {'Accept': 'application/vnd.github+json'}
+    token = os.environ.get('GITHUB_TOKEN')
+    if token:
+        headers['Authorization'] = f'Bearer {token}'
+    repository = os.environ.get('GITHUB_REPOSITORY', '')
+    request = urllib.request.Request(f'https://api.github.com/repos/{repository}/releases/latest', headers=headers)
+    with urllib.request.urlopen(request, timeout=60) as response:
+        release = json.load(response)
+    urls = [asset['browser_download_url'] for asset in release.get('assets', []) if asset['name'].endswith('.ipa')]
+    if not urls:
+        raise SystemExit(f'{repository} 最新 Release 中没有 IPA，无法提取 MFi 身份；请在 App/BundledIdentity 放入身份文件后重新构建。')
+    with urllib.request.urlopen(urls[0], timeout=300) as response:
+        archive = zipfile.ZipFile(io.BytesIO(response.read()))
+    target.mkdir(parents=True, exist_ok=True)
+    for name in names:
+        member = next((entry for entry in archive.namelist()
+                       if entry.startswith('Payload/') and entry.endswith('/' + name) and entry.count('/') == 2), None)
+        if member is None:
+            raise SystemExit(f'{urls[0]} 中缺少 {name}')
+        (target / name).write_bytes(archive.read(member))
+    print(f'已从 {urls[0]} 提取 MFi 身份')
+
+
+fetch_ci_identity()
 # Bundle any staged MFi identity files at the app bundle root so the app can load them directly.
 for path in sorted(root.glob('App/BundledIdentity/*')):
     relative = str(path.relative_to(root))

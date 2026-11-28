@@ -23,7 +23,7 @@ TDS_MFI_SOURCE_IPA=/path/CarWithin-1.0.6-unsigned.ipa Tools/build_ipa.sh  # 提�
 bash Tools/extract_mfi_identity.sh --check /path/CarWithin-unsigned.ipa   # 校验某个包是否内置身份
 ```
 
-`App/BundledIdentity/` 的内容被 `.gitignore` 排除，不要提交。GitHub Actions 优先从仓库 Secret `MFI_P7B_B64`、`MFI_CER_B64`、`MFI_X963_B64` 解码写入这三份文件（`Tools/identity-secrets.sh` 打印三个值）；未配置 Secret 时自动从最新 Release 的 `CarWithin-*-unsigned.ipa` 提取，两条路径都在构建前校验，都拿不到就失败，避免产出装好却连不上的包。`Tools/build_ipa.sh` 在缺少身份文件时会拒绝构建，构建完成后再用 `--check` 复核产物。
+`App/BundledIdentity/` 的内容被 `.gitignore` 排除，不要提交。GitHub Actions 上 `Tools/generate_project.py` 发现该目录为空会从本仓库最新 Release 的 IPA 提取三份文件（只在 `GITHUB_ACTIONS=true` 时生效，本地生成工程不受影响），取不到就中止，避免产出装好却连不上的包。`Tools/identity-secrets.sh` 把三份文件转成 `MFI_P7B_B64`、`MFI_CER_B64`、`MFI_X963_B64`，供以后在 workflow 里直接注入 Secret。`Tools/build_ipa.sh` 在缺少身份文件时会拒绝构建，构建完成后再用 `--check` 复核产物。
 
 English: use the same source revision and bundled resources. Run the commands above for an unsigned arm64 Release build, or configure your own team and bundle identifier for device signing. Accessory credentials and Apple signing material are excluded. The project can compile without credentials, but a working CarPlay session requires a valid accessory identity. Local identity resources can be staged before running the generator; they must not be committed to a public repository.
 
