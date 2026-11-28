@@ -13,6 +13,7 @@ CarWithin runs CarPlay on the same iPhone that generates its interface. Use CarP
 - [Download from GitHub Releases](https://github.com/YouNai-012/CarWithin/releases/latest). The current version is **1.0.6 (build 18)**.
 - Download `CarWithin-1.0.6-unsigned.ipa` and sign and install it with an IPA sideloading tool using your own signing setup. Follow any iOS prompts for developer trust or Developer Mode.
 - The minimum installation target is iOS/iPadOS 16.0 on arm64; iOS 15 is not supported. Same-device CarPlay, audio, and background behavior still need testing on iOS 16.x hardware. CarWithin uses private iOS interfaces. Compatibility depends on the device, OS version, and signing setup, and OS updates can affect it.
+- **Release builds bundle the MFi accessory identity** (`certificate.p7b`, `leaf.cer`, `private.x963`), so no import step is needed. If the app shows "No valid MFi identity has been imported" with the start button disabled, the IPA was not built by this repository, usually a local source build without the identity files. Extract them with `Tools/extract_mfi_identity.sh /path/release.ipa` into `App/BundledIdentity/` and rebuild; see [SOURCE-BUILD.md](SOURCE-BUILD.md).
 
 ## What is new in 1.0.6
 

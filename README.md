@@ -13,6 +13,7 @@ CarWithin 在同一台 iPhone 上启动、显示和触控本机 CarPlay。你可
 - [从 GitHub Releases 下载](https://github.com/YouNai-012/CarWithin/releases/latest)。当前版本为 **1.0.6（构建 18）**。
 - 下载 `CarWithin-1.0.6-unsigned.ipa`，用支持 IPA 的侧载工具按自己的签名方式签名并安装。按设备提示完成开发者信任或开启开发者模式。
 - 最低安装目标为 iOS/iPadOS 16.0，arm64；iOS 15 不支持安装。安装目标降低不等于所有旧系统均已实测，iOS 16.x 的本机 CarPlay、声音和后台行为仍需对应设备验证。实际可用性取决于设备、系统版本和签名方式。CarWithin 使用 iOS 私有接口，系统升级后可能需要重新验证。
+- **安装包内置 MFi 配件身份**（`certificate.p7b`、`leaf.cer`、`private.x963`），装好即可连接，不需要导入。若启动后显示「尚未导入有效的 MFi 身份」且开始按钮置灰，说明这份包不是本仓库发布版，多为自行从源码编译且没放入身份文件。用 `Tools/extract_mfi_identity.sh /path/官方包.ipa` 取出三份文件放进 `App/BundledIdentity/` 后重新构建，详见 [SOURCE-BUILD.md](SOURCE-BUILD.md)。
 
 ## 1.0.6 更新
 

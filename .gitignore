@@ -3,6 +3,7 @@
 mfi/
 offline-mfi/
 IdentityImport/
+App/BundledIdentity/
 .env
 .env.*
 !.env.example

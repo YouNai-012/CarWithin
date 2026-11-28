@@ -15,6 +15,16 @@ xcodebuild -project TDSCarKit.xcodeproj -scheme TDSCarKit \
 
 源码不包含配件认证身份、私钥或证书。没有身份仍可编译，但实际本机 CarPlay 连接需要有效身份。可把自己的 `certificate.p7b`、`leaf.cer`、`private.x963` 放到 `App/BundledIdentity/` 后重新生成工程，或通过 `Documents/IdentityImport` 导入 Keychain。安装包沿用先前公开 IPA 已有的认证资源；这些资源不包含在源码附件，也不属于代码许可证的授权范围。内置文件可以从安装包提取，不应视为不可导出的秘密。
 
+从已有的未签名 IPA 取出这三份文件：
+
+```sh
+Tools/extract_mfi_identity.sh /path/CarWithin-1.0.6-unsigned.ipa        # 写入 App/BundledIdentity
+TDS_MFI_SOURCE_IPA=/path/CarWithin-1.0.6-unsigned.ipa Tools/build_ipa.sh  # 提取后直接构建
+bash Tools/extract_mfi_identity.sh --check /path/CarWithin-unsigned.ipa   # 校验某个包是否内置身份
+```
+
+`App/BundledIdentity/` 的内容被 `.gitignore` 排除，不要提交。GitHub Actions 优先从仓库 Secret `MFI_P7B_B64`、`MFI_CER_B64`、`MFI_X963_B64` 解码写入这三份文件（`Tools/identity-secrets.sh` 打印三个值）；未配置 Secret 时自动从最新 Release 的 `CarWithin-*-unsigned.ipa` 提取，两条路径都在构建前校验，都拿不到就失败，避免产出装好却连不上的包。`Tools/build_ipa.sh` 在缺少身份文件时会拒绝构建，构建完成后再用 `--check` 复核产物。
+
 English: use the same source revision and bundled resources. Run the commands above for an unsigned arm64 Release build, or configure your own team and bundle identifier for device signing. Accessory credentials and Apple signing material are excluded. The project can compile without credentials, but a working CarPlay session requires a valid accessory identity. Local identity resources can be staged before running the generator; they must not be committed to a public repository.
 
 The combined distribution is AGPL-3.0-only. See `LICENSE`, `THIRD_PARTY_NOTICES.txt`, `LICENSES`, `ThirdParty`, `App/KCP-LICENSE.txt` and `App/ANTBMS-LICENSE.txt`.
